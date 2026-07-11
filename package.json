@@ -1,0 +1,27 @@
+{
+  "name": "veto",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Pre-signature verification infrastructure for autonomous agents. Simulate. Diff. Prove.",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "contracts"
+  ],
+  "scripts": {
+    "engine:dev": "npm --workspace apps/engine run dev",
+    "engine:build": "npm --workspace apps/engine run build",
+    "engine:start": "npm --workspace apps/engine run start",
+    "web:dev": "npm --workspace apps/web run dev",
+    "web:build": "npm --workspace apps/web run build",
+    "web:start": "npm --workspace apps/web run start",
+    "sdk:build": "npm --workspace packages/sdk run build",
+    "contracts:compile": "npm --workspace contracts run compile",
+    "contracts:test": "npm --workspace contracts run test",
+    "contracts:deploy": "npm --workspace contracts run deploy"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}

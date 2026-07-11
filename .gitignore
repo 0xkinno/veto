@@ -1,0 +1,30 @@
+# dependencies
+node_modules/
+.pnp
+.pnp.js
+
+# builds
+dist/
+.next/
+out/
+build/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# hardhat
+artifacts/
+cache/
+typechain-types/
+
+# logs
+*.log
+npm-debug.log*
+
+# os / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
