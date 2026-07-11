@@ -1,3 +1,17 @@
+#!/usr/bin/env bash
+# VETO — hands image fix + Remotion video (with the hands scene)
+# Run from the root of your veto folder:  bash apply-hands-fix.sh
+#
+# 1. Adds the missing <img class="hands-img"> to the landing (exactly as the approved HTML)
+# 2. Adds the Handoff scene to the Remotion video so the hands appear there too
+#
+# NOTE: you must place hands-sky.png into apps/web/public/ yourself (see below).
+set -e
+echo "Applying hands fix into $(pwd) ..."
+mkdir -p apps/web/public apps/web/app remotion/src remotion/public
+
+# ---------- apps/web/app/page.tsx ----------
+cat > apps/web/app/page.tsx << 'VETO_FILE_1_END_9f3a'
 "use client";
 
 import { useEffect, useRef } from "react";
@@ -697,3 +711,210 @@ export default function Home() {
     </>
   );
 }
+VETO_FILE_1_END_9f3a
+
+# ---------- remotion/src/Handoff.tsx ----------
+cat > remotion/src/Handoff.tsx << 'VETO_FILE_2_END_9f3a'
+import React from "react";
+import { AbsoluteFill, Img, interpolate, spring, staticFile, useCurrentFrame, useVideoConfig } from "remotion";
+import { C, F } from "./theme";
+
+/**
+ * Scene — The hand-off.
+ * Two agents passing value between them. VETO stands in the gap.
+ */
+export const Handoff: React.FC = () => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+
+  // slow push-in on the sky
+  const zoom = interpolate(frame, [0, 200], [1.04, 1.12], { extrapolateRight: "clamp" });
+
+  const tokens = [
+    { sym: "OKB", name: "OKB", sub: "X Layer", val: "$52.14", chip: "verified", color: "#2E3A4E", chipColor: C.emerald, chipBg: C.emeraldBg },
+    { sym: "BTC", name: "Bitcoin", sub: "BTC", val: "$4,235.17", chip: "verified", color: "#8A6B2E", chipColor: C.emerald, chipBg: C.emeraldBg },
+    { sym: "ETH", name: "Ethereum", sub: "ETH", val: "$1,250.08", chip: "warn", color: "#4E5F78", chipColor: C.amber, chipBg: C.amberBg },
+    { sym: "SOL", name: "Solana", sub: "SOL", val: "$212.40", chip: "refused", color: "#3E7A64", chipColor: C.crimson, chipBg: C.crimsonBg },
+  ];
+
+  const caption = spring({ frame: frame - 120, fps, config: { damping: 200 } });
+
+  return (
+    <AbsoluteFill style={{ background: C.ivory, overflow: "hidden" }}>
+      <AbsoluteFill style={{ transform: `scale(${zoom})` }}>
+        <Img
+          src={staticFile("hands-sky.png")}
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            WebkitMaskImage:
+              "linear-gradient(180deg,transparent 0%,#000 12%,#000 88%,transparent 100%)",
+            maskImage:
+              "linear-gradient(180deg,transparent 0%,#000 12%,#000 88%,transparent 100%)",
+          }}
+        />
+      </AbsoluteFill>
+
+      {/* token stack floating in the gap between the hands */}
+      <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14, width: 560 }}>
+          {tokens.map((t, i) => {
+            const s = spring({ frame: frame - 16 - i * 10, fps, config: { damping: 200 } });
+            return (
+              <div
+                key={t.sym}
+                style={{
+                  opacity: s,
+                  transform: `translateY(${interpolate(s, [0, 1], [26, 0])}px)`,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 16,
+                  background: C.card,
+                  border: `1px solid ${C.line}`,
+                  borderRadius: 14,
+                  padding: "16px 20px",
+                  boxShadow: "0 8px 30px rgba(30,40,30,.10)",
+                  fontFamily: F.sans,
+                }}
+              >
+                <span
+                  style={{
+                    width: 42, height: 42, borderRadius: "50%",
+                    background: t.color, color: "#fff",
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    fontSize: 12, fontWeight: 600, letterSpacing: ".04em",
+                  }}
+                >
+                  {t.sym}
+                </span>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  <b style={{ fontSize: 17, color: C.ink }}>{t.name}</b>
+                  <span style={{ fontSize: 13, color: C.ink3 }}>{t.sub}</span>
+                </div>
+                <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 12 }}>
+                  <b style={{ fontSize: 17, color: C.ink }}>{t.val}</b>
+                  <span
+                    style={{
+                      fontSize: 11,
+                      padding: "5px 10px",
+                      borderRadius: 100,
+                      background: t.chipBg,
+                      color: t.chipColor,
+                      fontWeight: 600,
+                      letterSpacing: ".04em",
+                    }}
+                  >
+                    {t.chip}
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <div
+          style={{
+            opacity: caption,
+            transform: `translateY(${interpolate(caption, [0, 1], [18, 0])}px)`,
+            fontFamily: F.serif,
+            fontSize: 34,
+            color: C.ink,
+            marginTop: 54,
+            textAlign: "center",
+          }}
+        >
+          Every hand-off between agents, verified in the middle.
+        </div>
+      </AbsoluteFill>
+    </AbsoluteFill>
+  );
+};
+VETO_FILE_2_END_9f3a
+
+# ---------- remotion/src/VetoDemo.tsx ----------
+cat > remotion/src/VetoDemo.tsx << 'VETO_FILE_3_END_9f3a'
+import React from "react";
+import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, Series } from "remotion";
+import { Intro } from "./Intro";
+import { Handoff } from "./Handoff";
+import { Verdict } from "./Verdict";
+import { Dashboard } from "./Dashboard";
+import { Outro } from "./Outro";
+import { C } from "./theme";
+
+/** Crossfade wrapper — fades a scene in and out at its edges. */
+const Fade: React.FC<{ children: React.ReactNode; duration: number }> = ({ children, duration }) => {
+  const frame = useCurrentFrame();
+  const opacity = interpolate(
+    frame,
+    [0, 18, duration - 18, duration],
+    [0, 1, 1, 0],
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
+  );
+  return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
+};
+
+// 30fps · total 60s = 1800 frames
+const INTRO = 210;      // 7s
+const HANDOFF = 240;    // 8s   — the hand-off between agents
+const VERDICT = 660;    // 22s  — the product working (the wow)
+const DASHBOARD = 420;  // 14s
+const OUTRO = 270;      // 9s   (total 1800 = 60s)
+
+export const VetoDemo: React.FC = () => {
+  return (
+    <AbsoluteFill style={{ background: C.ivory }}>
+      <Series>
+        <Series.Sequence durationInFrames={INTRO}>
+          <Fade duration={INTRO}>
+            <Intro />
+          </Fade>
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={HANDOFF}>
+          <Fade duration={HANDOFF}>
+            <Handoff />
+          </Fade>
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={VERDICT}>
+          <Fade duration={VERDICT}>
+            <Verdict />
+          </Fade>
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={DASHBOARD}>
+          <Fade duration={DASHBOARD}>
+            <Dashboard />
+          </Fade>
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={OUTRO}>
+          <Fade duration={OUTRO}>
+            <Outro />
+          </Fade>
+        </Series.Sequence>
+      </Series>
+    </AbsoluteFill>
+  );
+};
+
+export const TOTAL_FRAMES = INTRO + HANDOFF + VERDICT + DASHBOARD + OUTRO;
+VETO_FILE_3_END_9f3a
+
+# copy the hands image into remotion/public if it exists in the web app
+if [ -f apps/web/public/hands-sky.png ]; then
+  cp apps/web/public/hands-sky.png remotion/public/hands-sky.png
+  echo "hands-sky.png copied to remotion/public/"
+else
+  echo ""
+  echo "!! IMPORTANT: apps/web/public/hands-sky.png is MISSING."
+  echo "   Save the hands image (blue sky, two hands reaching) as:"
+  echo "     apps/web/public/hands-sky.png"
+  echo "   then re-run this script."
+fi
+echo ""
+echo "Done."
+echo "Landing:  npm run web:dev   -> the hands section now shows the photo"
+echo "Video:    cd remotion && npm install && npm run render-video"

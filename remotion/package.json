@@ -1,0 +1,19 @@
+{
+  "name": "veto-remotion",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "render-video": "remotion render src/index.ts VetoDemo out/veto-demo.mp4 --codec=h264 --crf=17",
+    "preview": "remotion studio src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.290",
+    "remotion": "4.0.290",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.5",
+    "typescript": "^5.6.2"
+  }
+}
