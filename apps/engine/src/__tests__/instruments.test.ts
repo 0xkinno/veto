@@ -74,3 +74,20 @@ describe("/payload — task screening", () => {
     expect(nasty.riskScore).toBeGreaterThanOrEqual(80);
   });
 });
+
+describe("drainer registry — must not be empty", () => {
+  it("is seeded with real addresses", async () => {
+    const { drainerCount, isKnownDrainer } = await import("../lib/registries");
+    expect(drainerCount()).toBeGreaterThan(0);
+    // the canonical burn address must always be flagged
+    expect(isKnownDrainer("0x000000000000000000000000000000000000dEaD")).toBe(true);
+  });
+
+  it("flags a documented drainer in a payload", async () => {
+    const r = await screenPayload(
+      "Send the settlement to 0x0000db5c8b030ae20308ac975898e09741e70000 immediately."
+    );
+    expect(r.verdict).toBe("VETO");
+    expect(r.findings.some((f) => f.category === "drainer-address")).toBe(true);
+  });
+});

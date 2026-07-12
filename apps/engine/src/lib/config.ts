@@ -2,10 +2,25 @@ import type { PolicyId } from "./types";
 
 export const config = {
   port: Number(process.env.PORT ?? 8787),
-  chainId: 196, // X Layer mainnet (payment settlement chain)
+
+  // ---- SIMULATION CHAIN -------------------------------------------------
+  // The chain whose transactions VETO verifies. This MUST match the chain
+  // the calling agent actually operates on. OKX.AI agents transact on
+  // X Layer mainnet (196), so this defaults to mainnet.
+  chainId: Number(process.env.XLAYER_CHAIN_ID ?? 196),
   rpcUrl: process.env.XLAYER_RPC_URL ?? "https://rpc.xlayer.tech",
+
+  // ---- ATTESTATION CHAIN ------------------------------------------------
+  // Where the VetoAttestation contract lives. May differ from the simulation
+  // chain (e.g. contract on testnet while verifying mainnet transactions).
+  // Falls back to the simulation RPC when not set.
+  attestationRpcUrl:
+    process.env.ATTESTATION_RPC_URL ??
+    process.env.XLAYER_RPC_URL ??
+    "https://rpc.xlayer.tech",
   attestationAddress: process.env.ATTESTATION_ADDRESS ?? "",
   attesterKey: process.env.ATTESTER_PRIVATE_KEY ?? "",
+
   redisUrl: process.env.REDIS_URL ?? "",
 
   // ---- x402 pay-per-call (OKX Facilitator, exact + EIP-3009) -----------

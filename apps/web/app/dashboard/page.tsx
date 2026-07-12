@@ -39,8 +39,18 @@ export default function Dashboard() {
         total: stats.total.toLocaleString(),
         allow: stats.allow.toLocaleString(),
         veto: stats.veto.toLocaleString(),
+        revenue: stats.revenueUsdt.toFixed(2),
+        refused: `${stats.refusedCount} signature${stats.refusedCount === 1 ? "" : "s"} refused`,
+        latency: `${(stats.avgLatency / 1000).toFixed(2)}s median`,
       }
-    : { total: "1,284", allow: "1,243", veto: "41" };
+    : {
+        total: "—",
+        allow: "—",
+        veto: "—",
+        revenue: "0.00",
+        refused: "awaiting engine",
+        latency: "awaiting engine",
+      };
 
   return (
     <div className="shell">
@@ -134,7 +144,7 @@ export default function Dashboard() {
               </div>
               <div className="v">{m.total}</div>
               <div className="d">
-                <span className="up">▲ 12.4%</span> vs prior period
+                {m.latency}
               </div>
             </div>
             <div className="metric">
@@ -146,7 +156,7 @@ export default function Dashboard() {
               </div>
               <div className="v">{m.allow}</div>
               <div className="d">
-                <span className="up">▲ 11.0%</span> effect matched intent
+                effect matched intent
               </div>
             </div>
             <div className="metric">
@@ -158,7 +168,7 @@ export default function Dashboard() {
               </div>
               <div className="v" style={{ color: "var(--crimson)" }}>{m.veto}</div>
               <div className="d">
-                <b style={{ color: "var(--ink)" }}>$182,400</b> exposure refused
+                {m.refused}
               </div>
             </div>
             <div className="metric">
@@ -169,10 +179,10 @@ export default function Dashboard() {
                 </span>
               </div>
               <div className="v">
-                318<span style={{ fontSize: 17, color: "var(--ink-3)" }}> USDT</span>
+                {m.revenue}<span style={{ fontSize: 17, color: "var(--ink-3)" }}> USDT</span>
               </div>
               <div className="d">
-                <span className="up">▲ 8.1%</span> 0.15–0.50 per ruling
+                0.15 USDT per ruling
               </div>
             </div>
           </div>

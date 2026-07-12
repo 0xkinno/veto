@@ -24,7 +24,7 @@ let contract: Contract | null = null;
 function getContract(): Contract | null {
   if (!config.attestationAddress || !config.attesterKey) return null;
   if (!contract) {
-    const provider = new JsonRpcProvider(config.rpcUrl);
+    const provider = new JsonRpcProvider(config.attestationRpcUrl);
     const wallet = new Wallet(config.attesterKey, provider);
     contract = new Contract(config.attestationAddress, ABI, wallet);
   }

@@ -26,6 +26,8 @@ export interface Stats {
   veto: number;
   avgLatency: number;
   ruleTally: Record<string, number>;
+  revenueUsdt: number;
+  refusedCount: number;
 }
 
 export interface VerdictResponse {

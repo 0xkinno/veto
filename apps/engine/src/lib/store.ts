@@ -69,5 +69,22 @@ export function stats() {
       ? 0
       : Math.round(verdicts.reduce((s, v) => s + v.latencyMs, 0) / total);
 
-  return { total, allow, warn, veto, avgLatency, ruleTally };
+  // x402 revenue: every ruling this engine served, at the published price.
+  // Derived, not decorative.
+  const revenueUsdt = Number((total * 0.15).toFixed(2));
+
+  // Exposure refused: what the VETO rulings actually stopped. We only count
+  // what we can evidence — one refused signature per VETO.
+  const refusedCount = veto;
+
+  return {
+    total,
+    allow,
+    warn,
+    veto,
+    avgLatency,
+    ruleTally,
+    revenueUsdt,
+    refusedCount,
+  };
 }

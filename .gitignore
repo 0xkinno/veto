@@ -39,3 +39,8 @@ demo/
 # apply scripts
 apply-*.sh
 restore-*.sh
+
+# internal docs (not for the public repo)
+docs/CHECKLIST.md
+VOICEOVER.md
+**/VOICEOVER.md
