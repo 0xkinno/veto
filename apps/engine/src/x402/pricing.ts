@@ -23,7 +23,12 @@ export function requirementsFor(
     asset: config.x402.asset,
     payTo: config.x402.payTo,
     maxTimeoutSeconds: config.x402.maxTimeoutSeconds,
-    extra: { name: config.x402.assetName, version: config.x402.assetVersion },
+    // Include decimals so a consumer never has to resolve the token itself.
+    extra: {
+      name: config.x402.assetName,
+      version: config.x402.assetVersion,
+      decimals: config.x402.assetDecimals,
+    },
   };
 }
 

@@ -42,9 +42,10 @@ export const config = {
     network: "eip155:196",
     x402Version: 2,
     scheme: "exact",
-    // Stablecoin used for pricing/settlement. USDG default (EIP-3009 native).
-    asset: process.env.X402_ASSET ?? "0x4ae46a509f6b1d9056937ba4500cb143933d2dc8",
-    assetName: process.env.X402_ASSET_NAME ?? "USDG",
+    // Stablecoin used for pricing/settlement.
+    // USDT on X Layer mainnet — the asset OKX's task system resolves.
+    asset: process.env.X402_ASSET ?? "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
+    assetName: process.env.X402_ASSET_NAME ?? "USDT",
     assetVersion: process.env.X402_ASSET_VERSION ?? "2",
     assetDecimals: Number(process.env.X402_ASSET_DECIMALS ?? 6),
     maxTimeoutSeconds: 60,
