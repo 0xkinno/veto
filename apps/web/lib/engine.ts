@@ -95,3 +95,64 @@ export async function runDemoVerdict(
   }
   return (await r.json()) as VerdictResponse;
 }
+
+
+// ---- the four other instruments ---------------------------------------
+
+export interface ApprovalFinding {
+  token: string; symbol: string; spender: string; allowance: string;
+  unlimited: boolean; spenderIsContract: boolean; knownDrainer: boolean;
+  risk: Verdict; reason: string;
+  revoke: { to: string; data: string; value: string };
+}
+export interface ApprovalsReport {
+  wallet: string; scanned: number; live: number; atRisk: number;
+  critical: number; exposureScore: number; findings: ApprovalFinding[];
+}
+
+export interface PayloadFinding {
+  category: string; severity: Verdict; message: string; evidence?: string;
+}
+export interface PayloadReport {
+  verdict: Verdict; riskScore: number; findings: PayloadFinding[];
+  addressesFound: string[]; summary: string;
+}
+
+export interface Signal { name: string; value: string; weight: number; note: string }
+export interface CounterpartyReport {
+  address: string; type: "contract" | "eoa";
+  grade: "TRUSTED" | "NEUTRAL" | "CAUTION" | "AVOID";
+  trustScore: number; signals: Signal[]; summary: string;
+  onChain: { isContract: boolean; codeSizeBytes: number; nativeBalanceWei: string; outgoingTxCount: number };
+}
+
+export interface ForensicsReport {
+  txHash: string; blockNumber: number; from: string; to: string | null;
+  status: "success" | "reverted"; policy: string;
+  wouldHaveRuled: Verdict; reasons: string[]; evidenceHash: string; postMortem: string;
+}
+
+async function post<T>(path: string, body: unknown): Promise<T> {
+  const r = await fetch(`${ENGINE_URL}${path}`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(body),
+  });
+  const data = await r.json();
+  if (!r.ok || (data as { error?: string }).error) {
+    throw new Error((data as { message?: string; error?: string }).message ?? (data as { error?: string }).error ?? `Engine ${r.status}`);
+  }
+  return data as T;
+}
+
+export const scanApprovals = (wallet: string) =>
+  post<ApprovalsReport>("/demo/approvals", { wallet });
+
+export const screenPayload = (payload: string) =>
+  post<PayloadReport>("/demo/payload", { payload });
+
+export const checkCounterparty = (address: string) =>
+  post<CounterpartyReport>("/demo/counterparty", { address });
+
+export const runForensics = (txHash: string, policy = "standard") =>
+  post<ForensicsReport>("/demo/forensics", { txHash, policy });

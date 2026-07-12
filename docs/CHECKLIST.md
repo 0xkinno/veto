@@ -215,3 +215,29 @@ npm run web:dev
 - [ ] 90-second demo video (paste malicious tx → VETO → attestation hash)
 - [ ] X thread, tag `@OKX` / `@XLayerOfficial`, hashtag `#okxai`
 - [ ] Public "VETO a live malicious tx" post
+
+---
+
+## Phase 11 — All five instruments  DONE
+
+- [x] `/verdict` — pre-signature verdicts (fork sim + 5 rules + attestation)
+- [x] `/approvals` — live allowance audit: reconstructs every Approval the wallet
+      granted, checks which are STILL live on-chain, scores drain exposure, and
+      returns a ready-to-sign revocation transaction for each dangerous one
+- [x] `/payload` — task screening: prompt injection, credential extraction,
+      embedded approve()/permit()/setApprovalForAll calldata, drainer addresses,
+      urgency coercion, exfiltration, obfuscation
+- [x] `/counterparty` — live trust grade (TRUSTED/NEUTRAL/CAUTION/AVOID) from real
+      on-chain signals: bytecode, code size, balance, nonce, drainer set
+- [x] `/forensics` — replays a REAL historical X Layer tx through the live rule
+      pipeline and reports what VETO would have ruled, with a post-mortem
+- [x] Free `/demo/*` mirrors of all five for the public console
+- [x] Chain-reading instruments FAIL LOUDLY when the RPC is unreachable
+- [x] 24 tests passing
+- [x] `npm run smoke` — live smoke test hitting all five against real X Layer
+
+**Verify against your live chain**
+```bash
+npm run engine:dev
+npm --workspace apps/engine run smoke
+```

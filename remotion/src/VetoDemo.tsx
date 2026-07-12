@@ -1,5 +1,5 @@
 import React from "react";
-import { AbsoluteFill, Sequence, interpolate, useCurrentFrame, Series } from "remotion";
+import { AbsoluteFill, interpolate, useCurrentFrame, Series } from "remotion";
 import { Intro } from "./Intro";
 import { Handoff } from "./Handoff";
 import { Verdict } from "./Verdict";
@@ -24,7 +24,7 @@ const INTRO = 210;      // 7s
 const HANDOFF = 240;    // 8s   — the hand-off between agents
 const VERDICT = 660;    // 22s  — the product working (the wow)
 const DASHBOARD = 420;  // 14s
-const OUTRO = 270;      // 9s   (total 1800 = 60s)
+const OUTRO = 270;      // 9s
 
 export const VetoDemo: React.FC = () => {
   return (

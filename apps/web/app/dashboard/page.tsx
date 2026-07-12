@@ -7,32 +7,26 @@ const NAV = [
   { label: "Request Verdict", on: false, href: "/console", ct: null, icon: (
     <svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" /></svg>
   ) },
-  { label: "Verdict Overview", on: true, ct: null, icon: (
+  { label: "Verdict Overview", on: true, href: "/dashboard", ct: null, icon: (
     <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="9" rx="1.5" /><rect x="14" y="3" width="7" height="5" rx="1.5" /><rect x="14" y="12" width="7" height="9" rx="1.5" /><rect x="3" y="16" width="7" height="5" rx="1.5" /></svg>
   ) },
-  { label: "Transaction Queue", on: false, ct: "24", icon: (
-    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M4 10h16" /></svg>
-  ) },
-  { label: "Simulation Engine", on: false, ct: null, icon: (
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" /><path d="M12 8v4l3 2" /></svg>
-  ) },
-  { label: "Intent Analysis", on: false, ct: null, icon: (
-    <svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l7-5 7 5M5 16l7 5 7-5" /></svg>
-  ) },
-  { label: "Evidence", on: false, ct: null, icon: (
-    <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM8 10h8M8 14h5" /></svg>
-  ) },
-  { label: "Policy", on: false, ct: null, icon: (
+  { label: "Approval Hygiene", on: false, href: "/approvals", ct: null, icon: (
     <svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z" /></svg>
   ) },
-  { label: "Risk Timeline", on: false, ct: null, icon: (
-    <svg viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M8 15v-4m4 4V8m4 7v-6" /></svg>
+  { label: "Payload Screening", on: false, href: "/payload", ct: null, icon: (
+    <svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2" /><path d="M4 10h16" /></svg>
   ) },
-  { label: "Attestation", on: false, ct: null, icon: (
+  { label: "Counterparty Check", on: false, href: "/counterparty", ct: null, icon: (
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4" /><path d="M4 21c0-4 3.6-7 8-7s8 3 8 7" /></svg>
+  ) },
+  { label: "Forensics", on: false, href: "/forensics", ct: null, icon: (
+    <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+  ) },
+  { label: "Evidence", on: false, href: "#", ct: null, icon: (
+    <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4zM8 10h8M8 14h5" /></svg>
+  ) },
+  { label: "Attestation", on: false, href: "#", ct: null, icon: (
     <svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="16" rx="2" /><path d="M9 9h6M9 13h6M9 17h4" /></svg>
-  ) },
-  { label: "Recent Verdicts", on: false, ct: null, icon: (
-    <svg viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4" /></svg>
   ) },
 ];
 

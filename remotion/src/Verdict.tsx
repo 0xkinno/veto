@@ -213,13 +213,13 @@ export const Verdict: React.FC = () => {
       <Cursor
         path={[
           { f: 0, x: 1560, y: 880 },
-          { f: 34, x: 300, y: 470 },   // clean-swap preset
+          { f: 34, x: 300, y: 470 },
           { f: 46, x: 300, y: 470 },
-          { f: 62, x: 470, y: 880 },   // request verdict
+          { f: 62, x: 470, y: 880 },
           { f: 150, x: 470, y: 880 },
-          { f: 176, x: 470, y: 470 },  // undeclared-approval preset
+          { f: 176, x: 470, y: 470 },
           { f: 186, x: 470, y: 470 },
-          { f: 200, x: 470, y: 880 },  // request verdict again
+          { f: 200, x: 470, y: 880 },
           { f: 300, x: 470, y: 880 },
         ]}
         clickAt={[44, 66, 184, 198]}

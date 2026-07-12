@@ -10,7 +10,6 @@ export const Handoff: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
 
-  // slow push-in on the sky
   const zoom = interpolate(frame, [0, 200], [1.04, 1.12], { extrapolateRight: "clamp" });
 
   const tokens = [
@@ -39,7 +38,6 @@ export const Handoff: React.FC = () => {
         />
       </AbsoluteFill>
 
-      {/* token stack floating in the gap between the hands */}
       <AbsoluteFill style={{ alignItems: "center", justifyContent: "center" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: 14, width: 560 }}>
           {tokens.map((t, i) => {

@@ -249,7 +249,7 @@ Callers set a risk posture. The same transaction can be ALLOW under one profile 
 
 ---
 
-## Why VETO wins
+## Why VETO Excels
 
 | Criterion | How VETO delivers |
 |---|---|

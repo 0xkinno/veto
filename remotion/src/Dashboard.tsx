@@ -6,7 +6,6 @@ const Metric: React.FC<{ k: string; v: string; sub: string; color?: string; dela
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const s = spring({ frame: frame - delay, fps, config: { damping: 200 } });
-  // count-up
   const target = parseFloat(v.replace(/[^0-9.]/g, "")) || 0;
   const shown = Math.round(interpolate(s, [0, 1], [0, target]));
   return (
@@ -36,7 +35,6 @@ export const Dashboard: React.FC = () => {
   const { fps } = useVideoConfig();
   const head = spring({ frame, fps, config: { damping: 200 } });
 
-  // rising bars
   const bars = [38, 56, 44, 72, 92, 60, 50];
 
   return (
@@ -59,7 +57,6 @@ export const Dashboard: React.FC = () => {
         <Metric k="x402 Revenue" v="318 USDT" sub="0.15–0.50 per ruling" delay={38} />
       </div>
 
-      {/* chart */}
       <div
         style={{
           marginTop: 26,
