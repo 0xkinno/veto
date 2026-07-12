@@ -74,21 +74,29 @@ export async function scanApprovals(wallet: string): Promise<ApprovalsReport> {
     latest.set(`${a.token}:${a.spender}`, { token: a.token, spender: a.spender });
   }
 
+  // Check every (token, spender) pair in PARALLEL. Sequential checks made a
+  // wallet with many approvals take tens of seconds.
+  const checks = await Promise.all(
+    [...latest.values()].map(async ({ token, spender }) => {
+      try {
+        const current = await allowanceOf(token, owner, spender);
+        if (current === 0n) return null; // already revoked, not live
+        const [meta, spenderIsContract] = await Promise.all([
+          tokenMeta(token),
+          isContract(spender).catch(() => false),
+        ]);
+        return { token, spender, current, meta, spenderIsContract };
+      } catch {
+        return null; // token not readable — skip rather than fail the report
+      }
+    })
+  );
+
   const findings: ApprovalFinding[] = [];
 
-  for (const { token, spender } of latest.values()) {
-    let current: bigint;
-    try {
-      current = await allowanceOf(token, owner, spender);
-    } catch {
-      continue; // token not readable — skip rather than fail the report
-    }
-    if (current === 0n) continue; // already revoked, not live
-
-    const [meta, spenderIsContract] = await Promise.all([
-      tokenMeta(token),
-      isContract(spender).catch(() => false),
-    ]);
+  for (const c of checks) {
+    if (!c) continue;
+    const { token, spender, current, meta, spenderIsContract } = c;
 
     const unlimited = current >= UNLIMITED_THRESHOLD;
     const drainer = isKnownDrainer(spender);

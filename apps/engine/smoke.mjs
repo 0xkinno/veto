@@ -10,6 +10,28 @@
 
 const BASE = process.argv[2] || "http://localhost:8787";
 
+/**
+ * Smoke targets. These must exist on the SIMULATION chain the engine is
+ * pointed at (XLAYER_RPC_URL). Defaults below are X Layer MAINNET entities.
+ *
+ * Override for testnet:
+ *   VETO_SMOKE_ADDRESS=0x... VETO_SMOKE_TX=0x... npm run smoke
+ */
+const TARGET_ADDRESS =
+  process.env.VETO_SMOKE_ADDRESS ||
+  // VETO's own attestation contract on X Layer mainnet
+  "0xDC7cE940E10ef664B78D185d81AC382AA218f7c4";
+
+const TARGET_WALLET =
+  process.env.VETO_SMOKE_WALLET ||
+  // the attester wallet on X Layer mainnet
+  "0x44be5240559880f39ba5604D33486Da4d8A48527";
+
+// VETO's own attestation contract deploy on X Layer MAINNET.
+const TARGET_TX =
+  process.env.VETO_SMOKE_TX ||
+  "0x96aaaa58564339be76e0d269adc9013bbd5cac6a5c38935e75b6514090150ebc";
+
 const post = async (path, body) => {
   const r = await fetch(`${BASE}${path}`, {
     method: "POST",
@@ -52,9 +74,7 @@ async function main() {
 
   // 3. COUNTERPARTY (live chain read — the attestation contract itself)
   line("3. /demo/counterparty — live X Layer read");
-  const c = await post("/demo/counterparty", {
-    address: "0xDC7cE940E10ef664B78D185d81AC382AA218f7c4",
-  });
+  const c = await post("/demo/counterparty", { address: TARGET_ADDRESS });
   if (c.data.error || c.status >= 400) {
     console.log("ERROR:", c.data);
   } else {
@@ -65,9 +85,7 @@ async function main() {
 
   // 4. APPROVALS (live chain read)
   line("4. /demo/approvals — live allowance audit");
-  const a = await post("/demo/approvals", {
-    wallet: "0x44be5240559880f39ba5604D33486Da4d8A48527",
-  });
+  const a = await post("/demo/approvals", { wallet: TARGET_WALLET });
   if (a.data.error || a.status >= 400) {
     console.log("ERROR:", a.data);
   } else {
@@ -81,10 +99,15 @@ async function main() {
 
   // 5. FORENSICS (live chain read — replay your own contract deploy tx)
   line("5. /demo/forensics — replay a real X Layer transaction");
-  const f = await post("/demo/forensics", {
-    txHash: "0x0ddaea64b5aa1b9b30c1dfeabb9a54ae649d2904be3055b78ad50253e9f0a231",
-    policy: "standard",
-  });
+  if (!TARGET_TX) {
+    console.log(
+      "skipped — set VETO_SMOKE_TX to a tx hash that exists on the chain the\n" +
+      "engine simulates on (XLAYER_RPC_URL). Any real X Layer mainnet tx works."
+    );
+    line("Done. Every instrument above ran against live X Layer.");
+    return;
+  }
+  const f = await post("/demo/forensics", { txHash: TARGET_TX, policy: "standard" });
   if (f.data.error || f.status >= 400) {
     console.log("ERROR:", f.data);
   } else {

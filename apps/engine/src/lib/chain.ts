@@ -102,38 +102,48 @@ export interface ApprovalLog {
  */
 export async function approvalHistory(
   owner: string,
-  lookback = 200_000n
+  lookback = Number(process.env.APPROVAL_LOOKBACK_BLOCKS ?? 100_000)
 ): Promise<ApprovalLog[]> {
   const c = chain();
   const latest = await c.getBlockNumber();
-  const from = latest > lookback ? latest - lookback : 0n;
+  const span = BigInt(lookback);
+  const from = latest > span ? latest - span : 0n;
 
-  const out: ApprovalLog[] = [];
-  const CHUNK = 10_000n;
+  const CHUNK = 20_000n;
 
+  // Build every range up front, then fetch them in PARALLEL. Sequential
+  // scanning of 20 chunks took ~29s; this collapses it to a few seconds.
+  const ranges: Array<[bigint, bigint]> = [];
   for (let start = from; start <= latest; start += CHUNK) {
     const end = start + CHUNK - 1n > latest ? latest : start + CHUNK - 1n;
-    try {
-      const logs = await c.getLogs({
+    ranges.push([start, end]);
+  }
+
+  const settled = await Promise.allSettled(
+    ranges.map(([start, end]) =>
+      c.getLogs({
         fromBlock: start,
         toBlock: end,
         event: APPROVAL_EVENT,
         args: { owner: owner as Address },
+      })
+    )
+  );
+
+  const out: ApprovalLog[] = [];
+  for (const r of settled) {
+    if (r.status !== "fulfilled") continue; // a rejected range must not fail the audit
+    for (const log of r.value) {
+      const a = log.args as { owner?: Address; spender?: Address; value?: bigint };
+      if (!a.owner || !a.spender || a.value === undefined) continue;
+      out.push({
+        token: log.address.toLowerCase(),
+        owner: a.owner.toLowerCase(),
+        spender: a.spender.toLowerCase(),
+        value: a.value,
+        blockNumber: log.blockNumber ?? 0n,
+        txHash: log.transactionHash ?? "",
       });
-      for (const log of logs) {
-        const a = log.args as { owner?: Address; spender?: Address; value?: bigint };
-        if (!a.owner || !a.spender || a.value === undefined) continue;
-        out.push({
-          token: log.address.toLowerCase(),
-          owner: a.owner.toLowerCase(),
-          spender: a.spender.toLowerCase(),
-          value: a.value,
-          blockNumber: log.blockNumber ?? 0n,
-          txHash: log.transactionHash ?? "",
-        });
-      }
-    } catch {
-      /* RPC rejected this range — skip the chunk rather than fail the request */
     }
   }
   return out;
