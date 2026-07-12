@@ -225,7 +225,7 @@ export default function Console() {
                     <span className="k">Attested on X Layer</span>
                     <span className="v">
                       <a
-                        href={`https://www.oklink.com/xlayer/tx/${result.attestationTx}`}
+                        href={`https://www.okx.com/web3/explorer/xlayer/tx/${result.attestationTx}`}
                         target="_blank"
                         rel="noreferrer"
                       >

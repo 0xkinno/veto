@@ -25,8 +25,8 @@ VETO is a pre-signature verification layer for autonomous agents. An agent sends
 | **Verdict Dashboard** | `https://REPLACE-with-your-vercel-url.vercel.app/dashboard` |
 | **Engine API (Railway)** | `https://REPLACE-with-your-railway-url.up.railway.app` |
 | **OKX.AI Listing** | `https://REPLACE-with-your-okx-ai-asp-link` |
-| **Attestation Contract (X Layer)** | [`0xDC7cE940E10ef664B78D185d81AC382AA218f7c4`](https://www.oklink.com/xlayer/address/0xDC7cE940E10ef664B78D185d81AC382AA218f7c4) |
-| **Deploy Transaction** | [`0x0ddaea64b5aa1b9b30c1dfeabb9a54ae649d2904be3055b78ad50253e9f0a231`](https://www.oklink.com/xlayer/tx/0x0ddaea64b5aa1b9b30c1dfeabb9a54ae649d2904be3055b78ad50253e9f0a231) |
+| **Attestation Contract (X Layer)** | [`0xDC7cE940E10ef664B78D185d81AC382AA218f7c4`](https://www.okx.com/web3/explorer/xlayer/address/0xDC7cE940E10ef664B78D185d81AC382AA218f7c4) |
+| **Deploy Transaction** | [`0x0ddaea64b5aa1b9b30c1dfeabb9a54ae649d2904be3055b78ad50253e9f0a231`](https://www.okx.com/web3/explorer/xlayer/tx/0x0ddaea64b5aa1b9b30c1dfeabb9a54ae649d2904be3055b78ad50253e9f0a231) |
 | **Demo Video (90s)** | `https://REPLACE-with-your-youtube-or-x-link` |
 | **X / Twitter Post** | `https://REPLACE-with-your-X-post-link` |
 | **GitHub** | `https://github.com/0xkinno/veto` |
@@ -249,7 +249,7 @@ Callers set a risk posture. The same transaction can be ALLOW under one profile 
 
 ---
 
-## Why VETO Excels
+## Why VETO wins
 
 | Criterion | How VETO delivers |
 |---|---|
