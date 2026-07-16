@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from "fastify";
 import { config } from "../lib/config";
-import { challengeFor, requirementsFor } from "./pricing";
+import { challengeFor, challengeHeaderFor, requirementsFor } from "./pricing";
 import {
   paymentConfigured,
   verifyPayment,
@@ -12,6 +12,8 @@ import {
  *
  * Flow per priced endpoint:
  *   1. No X-PAYMENT header  -> 402 with the payment challenge (accepts[]).
+ *      The challenge is returned BOTH as the JSON body AND as a base64-
+ *      encoded PAYMENT-REQUIRED header (required by the x402 spec).
  *   2. X-PAYMENT present    -> decode base64 PaymentPayload, /verify, then
  *                              /settle (sync) on X Layer.
  *   3. settle success       -> stash the on-chain tx hash on the request so
@@ -27,7 +29,7 @@ export function requirePayment(endpoint: keyof typeof config.pricing) {
     if (!paymentConfigured()) {
       req.log.warn(
         { endpoint },
-        "x402 not configured — serving without payment (dev mode)"
+        "x402 not configured -- serving without payment (dev mode)"
       );
       return; // pass-through
     }
@@ -37,7 +39,10 @@ export function requirePayment(endpoint: keyof typeof config.pricing) {
 
     // 1. No payment yet -> issue the 402 challenge.
     if (!header || typeof header !== "string") {
-      reply.code(402).send(challengeFor(endpoint, resourceUrl));
+      reply
+        .code(402)
+        .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
+        .send(challengeFor(endpoint, resourceUrl));
       return reply;
     }
 
@@ -58,24 +63,30 @@ export function requirePayment(endpoint: keyof typeof config.pricing) {
     try {
       const verified = await verifyPayment(paymentPayload, requirements);
       if (!verified.isValid) {
-        reply.code(402).send({
-          error: "payment verification failed",
-          reason: verified.invalidReason,
-          message: verified.invalidMessage,
-          accepts: [requirements],
-        });
+        reply
+          .code(402)
+          .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
+          .send({
+            error: "payment verification failed",
+            reason: verified.invalidReason,
+            message: verified.invalidMessage,
+            accepts: [requirements],
+          });
         return reply;
       }
 
-      // 4. Settle on X Layer (synchronous — wait for the tx hash).
+      // 4. Settle on X Layer (synchronous -- wait for the tx hash).
       const settled = await settlePayment(paymentPayload, requirements, true);
       if (!settled.success || settled.status === "failed") {
-        reply.code(402).send({
-          error: "settlement failed",
-          reason: settled.errorReason,
-          message: settled.errorMessage,
-          accepts: [requirements],
-        });
+        reply
+          .code(402)
+          .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
+          .send({
+            error: "settlement failed",
+            reason: settled.errorReason,
+            message: settled.errorMessage,
+            accepts: [requirements],
+          });
         return reply;
       }
 

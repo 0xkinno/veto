@@ -32,15 +32,28 @@ export function requirementsFor(
   };
 }
 
-/** The full 402 body an agent needs to construct its payment. */
+/** The full 402 challenge an agent needs to construct its payment. */
 export function challengeFor(
   endpoint: keyof typeof config.pricing,
   resourceUrl: string
 ) {
   return {
     x402Version: config.x402.x402Version,
+    resource: resourceUrl,
     accepts: [requirementsFor(endpoint, resourceUrl)],
-    resource: { url: resourceUrl },
-    error: "payment required",
   };
+}
+
+/**
+ * Base64-encode the challenge for the PAYMENT-REQUIRED header.
+ * The x402 spec requires this header on every 402 response so callers
+ * can parse payment requirements without inspecting the body.
+ */
+export function challengeHeaderFor(
+  endpoint: keyof typeof config.pricing,
+  resourceUrl: string
+): string {
+  return Buffer.from(
+    JSON.stringify(challengeFor(endpoint, resourceUrl))
+  ).toString("base64");
 }
