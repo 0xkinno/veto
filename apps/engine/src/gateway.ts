@@ -91,6 +91,10 @@ async function startGateway() {
   // lists the five VETO tools, calls one, and gets a result. JSON body is
   // parsed only for this route so it does not interfere with the proxy.
   app.post("/mcp", express.json(), handleMcpRequest);
+  // Some MCP clients open a GET for the SSE stream and a DELETE to end a
+  // session. Handling all three makes /mcp work with any compliant client.
+  app.get("/mcp", handleMcpRequest);
+  app.delete("/mcp", handleMcpRequest);
 
   // Free health check for UptimeRobot + OKX reachability. Answered by the
   // gateway itself so it responds even before proxying is ready.
