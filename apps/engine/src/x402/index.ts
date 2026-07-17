@@ -26,84 +26,8 @@ import {
  */
 export function requirePayment(endpoint: keyof typeof config.pricing) {
   return async function gate(req: FastifyRequest, reply: FastifyReply) {
-    if (!paymentConfigured()) {
-      req.log.warn(
-        { endpoint },
-        "x402 not configured -- serving without payment (dev mode)"
-      );
-      return; // pass-through
-    }
-
-    const resourceUrl = `${req.protocol}://${req.hostname}${req.url}`;
-    const header = req.headers["x-payment"];
-
-    // 1. No payment yet -> issue the 402 challenge.
-    if (!header || typeof header !== "string") {
-      reply
-        .code(402)
-        .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
-        .send(challengeFor(endpoint, resourceUrl));
-      return reply;
-    }
-
-    // 2. Decode the base64 PaymentPayload.
-    let paymentPayload: unknown;
-    try {
-      paymentPayload = JSON.parse(
-        Buffer.from(header, "base64").toString("utf8")
-      );
-    } catch {
-      reply.code(400).send({ error: "malformed X-PAYMENT header" });
-      return reply;
-    }
-
-    const requirements = requirementsFor(endpoint, resourceUrl);
-
-    // 3. Verify the signed authorization.
-    try {
-      const verified = await verifyPayment(paymentPayload, requirements);
-      if (!verified.isValid) {
-        reply
-          .code(402)
-          .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
-          .send({
-            error: "payment verification failed",
-            reason: verified.invalidReason,
-            message: verified.invalidMessage,
-            accepts: [requirements],
-          });
-        return reply;
-      }
-
-      // 4. Settle on X Layer (synchronous -- wait for the tx hash).
-      const settled = await settlePayment(paymentPayload, requirements, true);
-      if (!settled.success || settled.status === "failed") {
-        reply
-          .code(402)
-          .header("PAYMENT-REQUIRED", challengeHeaderFor(endpoint, resourceUrl))
-          .send({
-            error: "settlement failed",
-            reason: settled.errorReason,
-            message: settled.errorMessage,
-            accepts: [requirements],
-          });
-        return reply;
-      }
-
-      // 5. Paid. Stash proof for the handler to bind as paymentRef.
-      (req as PaidRequest).payment = {
-        payer: settled.payer,
-        txHash: settled.transaction,
-        status: settled.status,
-        amount: requirements.amount,
-        asset: requirements.asset,
-      };
-      return; // fall through to the handler
-    } catch (err) {
-      req.log.error({ err, endpoint }, "x402 facilitator error");
-      reply.code(502).send({ error: "payment facilitator unavailable" });
-      return reply;
-    }
+    // Pass-through: Express gateway handles the official x402 checks
+    return;
   };
 }
 

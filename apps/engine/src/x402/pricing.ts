@@ -39,7 +39,11 @@ export function challengeFor(
 ) {
   return {
     x402Version: config.x402.x402Version,
-    resource: resourceUrl,
+    resource: {
+      url: resourceUrl,
+      description: `VETO ${endpoint} service`,
+      mimeType: "application/json",
+    },
     accepts: [requirementsFor(endpoint, resourceUrl)],
   };
 }

@@ -86,6 +86,7 @@ async function startGateway() {
   console.log(`[gateway] engine healthy on :${INTERNAL_PORT}`);
 
   const app = express();
+  app.set("trust proxy", true);
 
   // A2MCP endpoint. OKX's marketplace bot connects here as an MCP client,
   // lists the five VETO tools, calls one, and gets a result. JSON body is
