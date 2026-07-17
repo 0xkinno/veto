@@ -1,7 +1,7 @@
 import type { PolicyId } from "./types";
 
 export const config = {
-  port: Number(process.env.PORT ?? 8787),
+  port: Number(process.env.INTERNAL_PORT ?? 8788),
 
   // ---- SIMULATION CHAIN -------------------------------------------------
   // The chain whose transactions VETO verifies. This MUST match the chain
