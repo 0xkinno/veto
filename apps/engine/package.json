@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "@okxweb3/x402-core": "^0.1.0",
     "@okxweb3/x402-evm": "^0.2.1",
     "@okxweb3/x402-express": "^0.1.1",
@@ -23,7 +24,8 @@
     "fastify": "^4.28.1",
     "http-proxy-middleware": "^3.0.7",
     "ioredis": "^5.4.1",
-    "viem": "^2.55.0"
+    "viem": "^2.55.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/express": "^5.0.6",

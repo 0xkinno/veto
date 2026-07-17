@@ -17,6 +17,7 @@ import http from "node:http";
 
 import express from "express";
 import { createProxyMiddleware } from "http-proxy-middleware";
+import { handleMcpRequest } from "./mcp.js";
 import {
   paymentMiddleware,
   x402ResourceServer,
@@ -85,6 +86,11 @@ async function startGateway() {
   console.log(`[gateway] engine healthy on :${INTERNAL_PORT}`);
 
   const app = express();
+
+  // A2MCP endpoint. OKX's marketplace bot connects here as an MCP client,
+  // lists the five VETO tools, calls one, and gets a result. JSON body is
+  // parsed only for this route so it does not interfere with the proxy.
+  app.post("/mcp", express.json(), handleMcpRequest);
 
   // Free health check for UptimeRobot + OKX reachability. Answered by the
   // gateway itself so it responds even before proxying is ready.
