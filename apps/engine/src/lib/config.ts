@@ -43,10 +43,9 @@ export const config = {
     x402Version: 2,
     scheme: "exact",
     // Stablecoin used for pricing/settlement.
-    // USDT on X Layer mainnet — the asset OKX's task system resolves.
-    asset: process.env.X402_ASSET ?? "0x1e4a5963abfd975d8c9021ce480b42188849d41d",
-    assetName: process.env.X402_ASSET_NAME ?? "USDT",
-    assetVersion: process.env.X402_ASSET_VERSION ?? "2",
+    asset: process.env.X402_ASSET ?? "0x779ded0c9e1022225f8e0630b35a9b54be713736",
+    assetName: process.env.X402_ASSET_NAME ?? "USD₮0",
+    assetVersion: process.env.X402_ASSET_VERSION ?? "1",
     assetDecimals: Number(process.env.X402_ASSET_DECIMALS ?? 6),
     maxTimeoutSeconds: 60,
   },
