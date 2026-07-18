@@ -25,6 +25,7 @@ import {
 import { ExactEvmScheme } from "@okxweb3/x402-evm/exact/server";
 import { OKXFacilitatorClient } from "@okxweb3/x402-core";
 import fs from "node:fs";
+import { Wallet, JsonRpcProvider, formatEther } from "ethers";
 
 const PUBLIC_PORT = Number(process.env.PORT ?? 8787);
 const INTERNAL_PORT = Number(process.env.INTERNAL_PORT ?? 8788);
@@ -144,15 +145,29 @@ async function startGateway() {
     res.json({ status: "ok", service: "veto-engine" });
   });
 
-  app.get("/debug-env", (_req, res) => {
+  app.get("/debug-env", async (_req, res) => {
     const mask = (s?: string) => s ? `${s.slice(0, 3)}...${s.slice(-3)}` : "MISSING";
+    let attesterAddress = "UNKNOWN";
+    let attesterBalance = "0";
+    try {
+      if (process.env.ATTESTER_PRIVATE_KEY) {
+        const provider = new JsonRpcProvider("https://rpc.xlayer.tech");
+        const wallet = new Wallet(process.env.ATTESTER_PRIVATE_KEY, provider);
+        attesterAddress = wallet.address;
+        const bal = await provider.getBalance(wallet.address);
+        attesterBalance = formatEther(bal);
+      }
+    } catch (err) {
+      attesterAddress = "ERROR: " + String(err);
+    }
     res.json({
       OKX_API_KEY: mask(OKX_API_KEY),
       OKX_SECRET_KEY: mask(OKX_SECRET_KEY),
       OKX_PASSPHRASE: mask(OKX_PASSPHRASE),
       VETO_PAYTO_ADDRESS: PAY_TO || "MISSING",
       ATTESTATION_ADDRESS: process.env.ATTESTATION_ADDRESS || "MISSING",
-      ATTESTER_PRIVATE_KEY: mask(process.env.ATTESTER_PRIVATE_KEY),
+      ATTESTER_ADDRESS: attesterAddress,
+      ATTESTER_BALANCE: attesterBalance,
       paymentConfigured,
     });
   });
