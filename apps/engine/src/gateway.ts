@@ -150,6 +150,10 @@ async function startGateway() {
     res.json({ status: "ok", service: "veto-engine" });
   });
 
+  app.get("/", (_req, res) => {
+    res.json({ status: "ok", service: "veto-engine", agent: "VETO" });
+  });
+
   app.get("/debug-env", async (_req, res) => {
     const mask = (s?: string) => s ? `${s.slice(0, 3)}...${s.slice(-3)}` : "MISSING";
     let attesterAddress = "UNKNOWN";

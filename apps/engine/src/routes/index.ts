@@ -23,6 +23,7 @@ import type { PolicyId, VerdictRequest } from "../lib/types";
  */
 export async function registerRoutes(app: FastifyInstance) {
   app.get("/health", async () => ({ status: "ok", service: "veto-engine" }));
+  app.get("/", async () => ({ status: "ok", service: "veto-engine", agent: "VETO" }));
 
   // ---- live dashboard reads --------------------------------------------
   app.get("/stats", async () => stats());
