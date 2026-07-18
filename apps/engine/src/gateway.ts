@@ -151,6 +151,8 @@ async function startGateway() {
       OKX_SECRET_KEY: mask(OKX_SECRET_KEY),
       OKX_PASSPHRASE: mask(OKX_PASSPHRASE),
       VETO_PAYTO_ADDRESS: PAY_TO || "MISSING",
+      ATTESTATION_ADDRESS: process.env.ATTESTATION_ADDRESS || "MISSING",
+      ATTESTER_PRIVATE_KEY: mask(process.env.ATTESTER_PRIVATE_KEY),
       paymentConfigured,
     });
   });
