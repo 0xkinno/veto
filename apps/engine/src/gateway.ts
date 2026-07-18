@@ -24,6 +24,7 @@ import {
 } from "@okxweb3/x402-express";
 import { ExactEvmScheme } from "@okxweb3/x402-evm/exact/server";
 import { OKXFacilitatorClient } from "@okxweb3/x402-core";
+import fs from "node:fs";
 
 const PUBLIC_PORT = Number(process.env.PORT ?? 8787);
 const INTERNAL_PORT = Number(process.env.INTERNAL_PORT ?? 8788);
@@ -40,13 +41,53 @@ const paymentConfigured = Boolean(
   OKX_API_KEY && OKX_SECRET_KEY && OKX_PASSPHRASE && PAY_TO
 );
 
-// ---- 1. spawn the Fastify engine on the internal port ------------------
+// ---- 0. setup file logging ---------------------------------------------
 const here = path.dirname(fileURLToPath(import.meta.url));
+const logFile = path.join(here, "server.log");
+fs.writeFileSync(logFile, ""); // truncate
+
+function logToFile(msg: string) {
+  const time = new Date().toISOString();
+  try {
+    fs.appendFileSync(logFile, `[${time}] ${msg}\n`);
+  } catch (err) {
+    // ignore logging errors
+  }
+}
+
+const originalLog = console.log;
+const originalError = console.error;
+const originalWarn = console.warn;
+
+console.log = (...args) => {
+  logToFile(args.join(" "));
+  originalLog(...args);
+};
+console.error = (...args) => {
+  logToFile("[ERROR] " + args.join(" "));
+  originalError(...args);
+};
+console.warn = (...args) => {
+  logToFile("[WARN] " + args.join(" "));
+  originalWarn(...args);
+};
+
+// ---- 1. spawn the Fastify engine on the internal port ------------------
 const enginePath = path.join(here, "index.js");
 
 const engine = spawn(process.execPath, [enginePath], {
   env: { ...process.env, PORT: String(INTERNAL_PORT), INTERNAL_PORT: String(INTERNAL_PORT) },
-  stdio: "inherit",
+  stdio: "pipe",
+});
+
+engine.stdout.on("data", (data) => {
+  logToFile("[ENGINE] " + data.toString().trim());
+  process.stdout.write(data);
+});
+
+engine.stderr.on("data", (data) => {
+  logToFile("[ENGINE-ERROR] " + data.toString().trim());
+  process.stderr.write(data);
 });
 
 engine.on("exit", (code) => {
@@ -112,6 +153,11 @@ async function startGateway() {
       VETO_PAYTO_ADDRESS: PAY_TO || "MISSING",
       paymentConfigured,
     });
+  });
+
+  app.get("/debug-logs", (_req, res) => {
+    if (!fs.existsSync(logFile)) return res.send("No logs yet.");
+    res.type("text/plain").send(fs.readFileSync(logFile, "utf8"));
   });
 
   if (paymentConfigured) {
