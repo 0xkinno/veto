@@ -15,6 +15,10 @@ async function main() {
   await hydrateRegistries();
 
   await app.register(import("@fastify/cors"), { origin: true });
+  app.addHook("onSend", async (request, reply, payload) => {
+    reply.header("Cache-Control", "no-store, no-cache, must-revalidate");
+    return payload;
+  });
   await registerRoutes(app);
 
   try {

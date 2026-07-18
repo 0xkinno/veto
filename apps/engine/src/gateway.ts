@@ -130,6 +130,11 @@ async function startGateway() {
   const app = express();
   app.set("trust proxy", true);
 
+  app.use((_req, res, next) => {
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+    next();
+  });
+
   // A2MCP endpoint. OKX's marketplace bot connects here as an MCP client,
   // lists the five VETO tools, calls one, and gets a result. JSON body is
   // parsed only for this route so it does not interfere with the proxy.
