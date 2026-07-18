@@ -195,7 +195,17 @@ async function startGateway() {
             description: "VETO pre-signature verdict",
             mimeType: "application/json",
           },
+          "GET /verdict": {
+            accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.15" }],
+            description: "VETO pre-signature verdict",
+            mimeType: "application/json",
+          },
           "POST /counterparty": {
+            accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.10" }],
+            description: "VETO counterparty check",
+            mimeType: "application/json",
+          },
+          "GET /counterparty": {
             accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.10" }],
             description: "VETO counterparty check",
             mimeType: "application/json",
@@ -205,12 +215,27 @@ async function startGateway() {
             description: "VETO task-payload screening",
             mimeType: "application/json",
           },
+          "GET /payload": {
+            accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.20" }],
+            description: "VETO task-payload screening",
+            mimeType: "application/json",
+          },
           "POST /approvals": {
             accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.30" }],
             description: "VETO approval hygiene",
             mimeType: "application/json",
           },
+          "GET /approvals": {
+            accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.30" }],
+            description: "VETO approval hygiene",
+            mimeType: "application/json",
+          },
           "POST /forensics": {
+            accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.50" }],
+            description: "VETO post-incident forensics",
+            mimeType: "application/json",
+          },
+          "GET /forensics": {
             accepts: [{ scheme: "exact", network: NETWORK, payTo: PAY_TO, price: "$0.50" }],
             description: "VETO post-incident forensics",
             mimeType: "application/json",

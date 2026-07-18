@@ -32,54 +32,74 @@ export async function registerRoutes(app: FastifyInstance) {
   });
 
   // ---- 1. /verdict — pre-signature verdicts ----------------------------
-  app.post(
-    "/verdict",
-    { preHandler: requirePayment("verdict") },
-    async (request) => {
+  app.route({
+    method: ["GET", "POST"],
+    url: "/verdict",
+    preHandler: requirePayment("verdict"),
+    handler: async (request) => {
+      if (request.method === "GET") {
+        return { status: "ready", service: "verdict" };
+      }
       const body = request.body as VerdictRequest;
       const payment = (request as PaidRequest).payment;
       return runVerdict(body, payment?.txHash);
     }
-  );
+  });
 
   // ---- 2. /approvals — approval hygiene --------------------------------
-  app.post(
-    "/approvals",
-    { preHandler: requirePayment("approvals") },
-    async (request) => {
+  app.route({
+    method: ["GET", "POST"],
+    url: "/approvals",
+    preHandler: requirePayment("approvals"),
+    handler: async (request) => {
+      if (request.method === "GET") {
+        return { status: "ready", service: "approvals" };
+      }
       const { wallet } = request.body as { wallet: string };
       if (!wallet) return { error: "wallet is required" };
       return scanApprovals(wallet);
     }
-  );
+  });
 
   // ---- 3. /payload — task-payload screening ----------------------------
-  app.post(
-    "/payload",
-    { preHandler: requirePayment("payload") },
-    async (request) => {
+  app.route({
+    method: ["GET", "POST"],
+    url: "/payload",
+    preHandler: requirePayment("payload"),
+    handler: async (request) => {
+      if (request.method === "GET") {
+        return { status: "ready", service: "payload" };
+      }
       const { payload } = request.body as { payload: unknown };
       if (payload == null) return { error: "payload is required" };
       return screenPayload(payload);
     }
-  );
+  });
 
   // ---- 4. /counterparty — counterparty pre-check -----------------------
-  app.post(
-    "/counterparty",
-    { preHandler: requirePayment("counterparty") },
-    async (request) => {
+  app.route({
+    method: ["GET", "POST"],
+    url: "/counterparty",
+    preHandler: requirePayment("counterparty"),
+    handler: async (request) => {
+      if (request.method === "GET") {
+        return { status: "ready", service: "counterparty" };
+      }
       const { address } = request.body as { address: string };
       if (!address) return { error: "address is required" };
       return checkCounterparty(address);
     }
-  );
+  });
 
   // ---- 5. /forensics — post-incident forensics -------------------------
-  app.post(
-    "/forensics",
-    { preHandler: requirePayment("forensics") },
-    async (request) => {
+  app.route({
+    method: ["GET", "POST"],
+    url: "/forensics",
+    preHandler: requirePayment("forensics"),
+    handler: async (request) => {
+      if (request.method === "GET") {
+        return { status: "ready", service: "forensics" };
+      }
       const { txHash, policy, intent } = request.body as {
         txHash: string;
         policy?: PolicyId;
@@ -88,7 +108,7 @@ export async function registerRoutes(app: FastifyInstance) {
       if (!txHash) return { error: "txHash is required" };
       return runForensics(txHash, policy ?? "standard", intent);
     }
-  );
+  });
 
   // ---- free demo routes (unpaid) — the public console ------------------
   app.post("/demo/verdict", async (request) => {
