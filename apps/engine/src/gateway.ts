@@ -103,6 +103,18 @@ async function startGateway() {
     res.json({ status: "ok", service: "veto-engine" });
   });
 
+  app.get("/debug-env", (_req, res) => {
+    const mask = (s?: string) => s ? `${s.slice(0, 3)}...${s.slice(-3)}` : "MISSING";
+    res.json({
+      OKX_API_KEY: mask(process.env.OKX_API_KEY),
+      OKX_SECRET_KEY: mask(process.env.OKX_SECRET_KEY),
+      OKX_API_SECRET: mask(process.env.OKX_API_SECRET),
+      OKX_PASSPHRASE: mask(process.env.OKX_PASSPHRASE),
+      VETO_PAYTO_ADDRESS: process.env.VETO_PAYTO_ADDRESS || "MISSING",
+      paymentConfigured,
+    });
+  });
+
   if (paymentConfigured) {
     const facilitatorClient = new OKXFacilitatorClient({
       apiKey: OKX_API_KEY,
