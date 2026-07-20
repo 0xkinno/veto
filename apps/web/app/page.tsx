@@ -102,6 +102,12 @@ export default function Home() {
           <a href="#capabilities">Capabilities</a>
           <a href="#exhibit">Exhibit</a>
           <a href="#integrate">Integrate</a>
+          <a href="https://okx.ai/agents/5165" target="_blank" rel="noopener noreferrer">
+            OKX.AI Listing
+          </a>
+          <a href="https://github.com/0xkinno/veto" target="_blank" rel="noopener noreferrer">
+            GitHub
+          </a>
           <a href="/console" className="nav-cta">
             Open console
           </a>
@@ -672,6 +678,9 @@ export default function Home() {
               <a href="#">Verdict API</a>
               <a href="#">SDK</a>
               <a href="#">Attestation ledger</a>
+              <a href="https://github.com/0xkinno/veto" target="_blank" rel="noopener noreferrer">
+                GitHub
+              </a>
             </div>
             <div className="foot-col">
               <b>Doctrine</b>
@@ -681,7 +690,9 @@ export default function Home() {
             </div>
             <div className="foot-col">
               <b>Network</b>
-              <a href="#">OKX.AI listing</a>
+              <a href="https://okx.ai/agents/5165" target="_blank" rel="noopener noreferrer">
+                OKX.AI listing
+              </a>
               <a href="#">X Layer contract</a>
               <a href="#">Status</a>
             </div>
