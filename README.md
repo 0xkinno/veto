@@ -258,7 +258,7 @@ Callers set a risk posture. The same transaction can be ALLOW under one profile 
 
 | Proof | Link | Status |
 |---|---|---|
-| OKX.AI marketplace listing | [Agent #5165](https://www.okx.ai/agents/5165) | Under review |
+| OKX.AI marketplace listing | [Agent #5165](https://www.okx.ai/agents/5165) | Live and Listed |
 | Live frontend | [veto-alpha.vercel.app](https://veto-alpha.vercel.app/) | Live |
 | Verdict console | [veto-alpha.vercel.app/console](https://veto-alpha.vercel.app/console) | Live |
 | Engine API | [veto-p0bn.onrender.com](https://veto-p0bn.onrender.com/) | Live |
