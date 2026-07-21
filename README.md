@@ -178,7 +178,7 @@ The engine is real. You can watch it rule in three ways.
 **2. The API (what agents actually call).** A single POST returns a structured verdict:
 
 ```bash
-curl -X POST https://veto-p0bn.onrender.com/demo/verdict \
+curl -X POST https://api.veto-security.xyz/demo/verdict \
   -H "content-type: application/json" \
   -d '{
     "tx": { "from": "0xAGENT", "to": "0xSPENDER", "data": "0x095ea7b3", "chainId": 196 },
